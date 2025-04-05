@@ -1,1 +1,1 @@
-# attend-me-helm-charts
+# attendme-helm-charts

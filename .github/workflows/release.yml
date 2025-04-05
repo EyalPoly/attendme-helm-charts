@@ -5,6 +5,9 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write
+
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -19,16 +22,43 @@ jobs:
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
-      - name: Set up Helm
+      - name: Install Helm
         uses: azure/setup-helm@v3
         with:
           version: v3.12.0
 
-      - name: Add dependency repos
+      # Debug step to check chart directory structure
+      - name: Debug chart directory
         run: |
-          helm repo add bitnami https://charts.bitnami.com/bitnami
+          echo "Chart directory contents:"
+          ls -la charts/
+          echo "Chart structure:"
+          find charts -type f | sort
+
+      # Package charts manually to verify they're valid
+      - name: Package charts manually
+        run: |
+          mkdir -p .cr-release-packages
+          for chart in charts/*; do
+            if [ -d "$chart" ]; then
+              echo "Packaging $chart"
+              helm package "$chart" -d .cr-release-packages/
+            fi
+          done
+          ls -la .cr-release-packages/
 
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.5.0
         env:
-          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}" 
+          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          CR_SKIP_EXISTING: "true"
+
+      # Verify gh-pages branch content
+      - name: Verify gh-pages content
+        run: |
+          git fetch origin gh-pages
+          git checkout gh-pages
+          echo "gh-pages branch contents:"
+          ls -la
+          echo "index.yaml content:"
+          cat index.yaml

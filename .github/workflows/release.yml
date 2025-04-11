@@ -27,6 +27,21 @@ jobs:
         with:
           version: v3.12.0
 
+      # Bump Chart Versions
+      - name: Bump chart version (patch)
+        run: |
+          for chart in charts/*; do
+            chart_yaml="$chart/Chart.yaml"
+            if [ -f "$chart_yaml" ]; then
+              echo "Bumping version in $chart_yaml"
+              version=$(grep '^version:' "$chart_yaml" | awk '{print $2}')
+              IFS='.' read -r major minor patch <<< "$version"
+              new_version="$major.$minor.$((patch + 1))"
+              sed -i "s/^version: .*/version: $new_version/" "$chart_yaml"
+              echo "New version: $new_version"
+            fi
+          done
+
       # Debug step to check chart directory structure
       - name: Debug chart directory
         run: |

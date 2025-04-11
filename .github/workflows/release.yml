@@ -4,6 +4,11 @@ on:
   push:
     branches:
       - main
+        # Exclude version bump commits from triggering the workflow
+        # Add condition based on commit message
+        # Use a regular expression to exclude commit messages with the pattern "chore: bump chart version"
+        # from triggering the workflow
+        if: "!contains(github.event.head_commit.message, 'chore: bump chart version')"
 
 permissions:
   contents: write
@@ -27,6 +32,18 @@ jobs:
         with:
           version: v3.12.0
 
+      # Check if commit message contains "chore: bump chart version"
+      - name: Check if commit message is version bump
+        id: check_commit
+        run: |
+          if [[ "${{ github.event.head_commit.message }}" == *"chore: bump chart version"* ]]; then
+            echo "This is a version bump commit, skipping chart release."
+            echo "skip=true" >> $GITHUB_ENV
+          else
+            echo "This is not a version bump commit, continuing with the release."
+            echo "skip=false" >> $GITHUB_ENV
+          fi
+
       # Bump Chart Versions
       - name: Bump chart version (patch)
         run: |
@@ -41,6 +58,13 @@ jobs:
               echo "New version: $new_version"
             fi
           done
+
+      # Commit and push version bump
+      - name: Commit and push chart version bump
+        run: |
+          git add charts/*/Chart.yaml
+          git commit -m "chore: bump chart version [automated]"
+          git push
 
       # Debug step to check chart directory structure
       - name: Debug chart directory

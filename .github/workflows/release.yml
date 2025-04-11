@@ -4,11 +4,6 @@ on:
   push:
     branches:
       - main
-        # Exclude version bump commits from triggering the workflow
-        # Add condition based on commit message
-        # Use a regular expression to exclude commit messages with the pattern "chore: bump chart version"
-        # from triggering the workflow
-        if: "!contains(github.event.head_commit.message, 'chore: bump chart version')"
 
 permissions:
   contents: write

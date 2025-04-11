@@ -3,6 +3,16 @@ entries:
   authorization-manager:
   - apiVersion: v2
     appVersion: 1.0.0
+    created: "2025-04-11T08:16:13.531644299Z"
+    description: Authorization Manager microservice
+    digest: 135752f95d2708f7f12dd6d8e9151ecc4ee5064e6173a12110c451d9e8db5082
+    name: authorization-manager
+    type: application
+    urls:
+    - https://github.com/EyalPoly/attendme-helm-charts/releases/download/authorization-manager-0.1.2/authorization-manager-0.1.2.tgz
+    version: 0.1.2
+  - apiVersion: v2
+    appVersion: 1.0.0
     created: "2025-04-11T07:52:58.940712299Z"
     description: Authorization Manager microservice
     digest: 3e03af2cef661ceabe5137df412f6d273b01ad93cbb98cf32bd4be6afd073bf7
@@ -11,4 +21,4 @@ entries:
     urls:
     - https://github.com/EyalPoly/attendme-helm-charts/releases/download/authorization-manager-0.1.1/authorization-manager-0.1.1.tgz
     version: 0.1.1
-generated: "2025-04-11T07:52:58.940718421Z"
+generated: "2025-04-11T08:16:13.531658055Z"

@@ -1,3 +1,14 @@
 apiVersion: v1
-entries: {}
-generated: "2025-04-05T16:43:28Z"
+entries:
+  authorization-manager:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2025-04-11T07:52:58.940712299Z"
+    description: Authorization Manager microservice
+    digest: 3e03af2cef661ceabe5137df412f6d273b01ad93cbb98cf32bd4be6afd073bf7
+    name: authorization-manager
+    type: application
+    urls:
+    - https://github.com/EyalPoly/attendme-helm-charts/releases/download/authorization-manager-0.1.1/authorization-manager-0.1.1.tgz
+    version: 0.1.1
+generated: "2025-04-11T07:52:58.940718421Z"

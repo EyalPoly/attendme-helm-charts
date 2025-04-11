@@ -1,15 +1,7 @@
-replicaCount: 1
-
-affinity:
-  nodeAffinity:
-    requiredDuringSchedulingIgnoredDuringExecution:
-      nodeSelectorTerms:
-        - matchExpressions:
-            - key: node-role.kubernetes.io/control-plane
-              operator: DoesNotExist
+replicaCount: 2
 
 image:
-  repository: eyalpoly/authmanager
+  repository: eyalpoly/authorization-manager
   tag: latest
   pullPolicy: Always
 

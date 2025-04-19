@@ -27,7 +27,6 @@ jobs:
         with:
           version: v3.12.0
 
-      # Check if commit message contains "chore: bump chart version"
       - name: Check if commit message is version bump
         id: check_commit
         run: |
@@ -39,29 +38,44 @@ jobs:
             echo "skip=false" >> $GITHUB_ENV
           fi
 
-      # Bump Chart Versions
-      - name: Bump chart version (patch)
+      - name: Bump chart versions if changed
         run: |
+          changed_charts=0
           for chart in charts/*; do
+            chart_name=$(basename "$chart")
             chart_yaml="$chart/Chart.yaml"
+      
             if [ -f "$chart_yaml" ]; then
-              echo "Bumping version in $chart_yaml"
-              version=$(grep '^version:' "$chart_yaml" | awk '{print $2}')
-              IFS='.' read -r major minor patch <<< "$version"
-              new_version="$major.$minor.$((patch + 1))"
-              sed -i "s/^version: .*/version: $new_version/" "$chart_yaml"
-              echo "New version: $new_version"
+              # Check if there are any changes in the chart directory
+              if git diff --quiet HEAD^ HEAD -- "$chart"; then
+                echo "No changes in $chart_name, skipping version bump."
+              else
+                echo "Detected changes in $chart_name, bumping version."
+                version=$(grep '^version:' "$chart_yaml" | awk '{print $2}')
+                IFS='.' read -r major minor patch <<< "$version"
+                new_version="$major.$minor.$((patch + 1))"
+                sed -i "s/^version: .*/version: $new_version/" "$chart_yaml"
+                echo "New version for $chart_name: $new_version"
+                changed_charts=1
+              fi
             fi
           done
+      
+          if [ "$changed_charts" -eq 0 ]; then
+            echo "No chart versions changed, skipping commit."
+            echo "skip=true" >> $GITHUB_ENV
+          else
+            echo "Chart versions changed, commit will proceed."
+            echo "skip=false" >> $GITHUB_ENV
+          fi
 
-      # Commit and push version bump
       - name: Commit and push chart version bump
+        if: env.skip == 'false'
         run: |
           git add charts/*/Chart.yaml
           git commit -m "chore: bump chart version [automated]"
           git push
 
-      # Debug step to check chart directory structure
       - name: Debug chart directory
         run: |
           echo "Chart directory contents:"
@@ -69,7 +83,6 @@ jobs:
           echo "Chart structure:"
           find charts -type f | sort
 
-      # Package charts manually to verify they're valid
       - name: Package charts manually
         run: |
           mkdir -p .cr-release-packages
@@ -87,7 +100,6 @@ jobs:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
           CR_SKIP_EXISTING: "true"
 
-      # Verify gh-pages branch content
       - name: Verify gh-pages content
         run: |
           git fetch origin gh-pages

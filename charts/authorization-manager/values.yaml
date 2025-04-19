@@ -26,8 +26,8 @@ env:
   - name: JWT_SECRET_NAME_POSTFIX
     valueFrom:
       secretKeyRef:
-        name: {{ .Values.jwtSecretName }}
-        key: {{ .Values.jwtSecretKey }}
+        name: jwt-secret
+        key: secretNamePostfix
   - name: GOOGLE_APPLICATION_CREDENTIALS
     value: "{{ .Values.gcpCreds.mountPath }}/gcp-service-account.json"
   - name: LOG_LEVEL

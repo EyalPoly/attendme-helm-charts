@@ -35,13 +35,13 @@ spec:
               protocol: TCP
 
           env:
-{{- with .Values.env }}
-{{ toYaml . | indent 12 }}
-{{- end }}
+            {{- with .Values.env }}
+            {{ toYaml . | nindent 12 }}
+            {{- end }}
 
           volumeMounts:
             - name: gcp-creds
               mountPath: {{ .Values.gcpCreds.mountPath }}
               readOnly: true
           resources:
-{{- toYaml .Values.resources | indent 12 }}
+            {{- toYaml .Values.resources | nindent 12 }}

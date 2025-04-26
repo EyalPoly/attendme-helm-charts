@@ -29,7 +29,7 @@ env:
         name: jwt-secret
         key: secretNamePostfix
   - name: GOOGLE_APPLICATION_CREDENTIALS
-    value: "{{ .Values.gcpCreds.mountPath }}/gcp-service-account.json"
+    value: "/var/secrets/google/gcp-service-account.json"
   - name: LOG_LEVEL
     value: "info"
 
